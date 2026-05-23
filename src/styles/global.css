@@ -7,6 +7,9 @@
   --hairline: #d6d6d0;
   --shadow: none;
   --compact-header-height: 4rem;
+  --sticky-top-offset: 6.5rem;
+  --sticky-viewport-offset: 7.75rem;
+  --post-scroll-offset: 7rem;
 }
 
 :root[data-theme='dark'] {
@@ -56,6 +59,10 @@ a:focus-visible {
   box-shadow: var(--shadow);
   cursor: pointer;
   font: .9rem/1 Georgia, serif;
+}
+
+.compact-linkedin-button {
+  display: none;
 }
 
 .theme-toggle span {
@@ -145,6 +152,15 @@ a:focus-visible {
   padding: clamp(1rem, 4vw, 2.5rem) 0 5rem;
 }
 
+.profile-hero-shell {
+  min-height: var(--profile-hero-height, auto);
+}
+
+.profile-hero-shell.is-compact .profile-hero {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .profile-hero {
   display: grid;
   justify-items: center;
@@ -154,11 +170,11 @@ a:focus-visible {
   border-bottom: 1px solid var(--hairline);
   background: color-mix(in srgb, var(--bg) 95%, transparent);
   box-shadow: var(--shadow);
-  transition: padding .18s ease-out, gap .18s ease-out, background .18s ease-out;
+  transition: opacity .18s ease-out, background .18s ease-out;
   backdrop-filter: blur(8px);
 }
 
-.profile-hero.is-compact {
+.profile-hero-compact {
   position: fixed;
   top: 0;
   left: 50%;
@@ -167,14 +183,28 @@ a:focus-visible {
   height: var(--compact-header-height);
   transform: translateX(-50%);
   grid-template-columns: auto minmax(0, 1fr);
+  display: grid;
   align-items: center;
   justify-items: stretch;
   gap: .35rem;
   padding: .75rem 3.5rem .75rem 0;
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease-out, background .18s ease-out;
   text-align: left;
 }
 
-.profile-hero.is-compact .hero-copy {
+.profile-hero-compact.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.profile-hero-compact .hero-copy {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -187,10 +217,9 @@ a:focus-visible {
   padding: .35rem;
   border: 1px solid var(--hairline);
   background: var(--paper);
-  transition: width .18s ease-out, padding .18s ease-out;
 }
 
-.profile-hero.is-compact .portrait-wrap { width: 42px; }
+.profile-hero-compact .portrait-wrap { width: 42px; }
 
 .portrait {
   display: block;
@@ -222,7 +251,7 @@ h1 {
   transition: margin .18s ease-out, font-size .18s ease-out, letter-spacing .18s ease-out;
 }
 
-.profile-hero.is-compact h1 {
+.profile-hero-compact h1 {
   margin: 0;
   font-size: clamp(1rem, 1.8vw, 1.18rem);
   letter-spacing: -.015em;
@@ -237,7 +266,7 @@ h1 {
   transition: opacity .14s ease-out, max-height .18s ease-out, margin .18s ease-out;
 }
 
-.profile-hero.is-compact .dek {
+.profile-hero-compact .dek {
   max-height: 0;
   margin: 0;
   opacity: 0;
@@ -245,7 +274,7 @@ h1 {
   pointer-events: none;
 }
 
-.profile-hero.is-compact .hero-actions {
+.profile-hero-compact .hero-actions {
   flex: 0 1 auto;
   flex-wrap: nowrap;
   justify-content: flex-end;
@@ -340,12 +369,12 @@ h1 {
 
 .date-index {
   position: sticky;
-  top: 6.5rem;
+  top: var(--sticky-top-offset);
   z-index: 7;
   display: grid;
   align-self: start;
   gap: .35rem;
-  max-height: calc(100vh - 7.75rem);
+  max-height: calc(100vh - var(--sticky-viewport-offset));
   overflow: auto;
   padding-left: .75rem;
   border-left: 1px solid var(--hairline);
@@ -353,10 +382,10 @@ h1 {
 
 .timeline-rule {
   position: sticky;
-  top: 6.5rem;
+  top: var(--sticky-top-offset);
   align-self: start;
   width: 1px;
-  height: calc(100vh - 7.75rem);
+  height: calc(100vh - var(--sticky-viewport-offset));
   background: var(--hairline);
 }
 
@@ -374,7 +403,7 @@ h1 {
   opacity: 0;
   transform: translateY(16px);
   transition: opacity .35s ease, transform .35s ease;
-  scroll-margin-top: 7rem;
+  scroll-margin-top: var(--post-scroll-offset);
 }
 
 .post-card[data-visible='true'] {
@@ -563,7 +592,12 @@ h2 {
 .sentinel { height: 1px; }
 
 @media (max-width: 700px) {
-  :root { --compact-header-height: 3.95rem; }
+  :root {
+    --compact-header-height: 3.95rem;
+    --sticky-top-offset: 4.75rem;
+    --sticky-viewport-offset: 5.95rem;
+    --post-scroll-offset: 8rem;
+  }
 
   .menu-toggle {
     position: fixed;
@@ -585,6 +619,36 @@ h2 {
     width: 2.35rem;
     height: 2.15rem;
     padding: 0;
+  }
+  .compact-linkedin-button {
+    position: fixed;
+    top: .9rem;
+    right: 3.8rem;
+    z-index: 10;
+    display: grid;
+    width: 2.35rem;
+    height: 2.15rem;
+    place-items: center;
+    border: 1px solid var(--hairline);
+    color: var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease-out;
+  }
+  .compact-linkedin-button.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .compact-linkedin-button:hover,
+  .compact-linkedin-button:focus-visible {
+    color: var(--paper);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .compact-linkedin-button svg {
+    flex: 0 0 auto;
   }
   .menu-toggle span {
     display: block;
@@ -629,43 +693,43 @@ h2 {
   .page-shell { width: min(calc(100% - 24px), 42rem); padding-top: 2rem; }
   .profile-hero { padding-top: .5rem; }
   .portrait-wrap { width: 128px; }
-  .profile-hero.is-compact {
+  .profile-hero-compact {
     grid-template-columns: auto minmax(0, 1fr);
     justify-content: start;
     justify-items: stretch;
     align-items: center;
     column-gap: .65rem;
     row-gap: 0;
-    padding: .6rem .9rem .6rem 3.25rem;
+    padding: .6rem .9rem .6rem 2.7rem;
   }
-  .profile-hero.is-compact .portrait-wrap {
+  .profile-hero-compact .portrait-wrap {
     display: grid;
     width: 2.35rem;
     height: 2.15rem;
     padding: 0;
     place-items: center;
   }
-  .profile-hero.is-compact .portrait {
+  .profile-hero-compact .portrait {
     width: 1.75rem;
     height: 1.75rem;
     aspect-ratio: 1;
     object-fit: cover;
   }
-  .profile-hero.is-compact .hero-copy {
+  .profile-hero-compact .hero-copy {
     display: flex;
     min-width: 0;
     align-items: center;
   }
-  .profile-hero.is-compact h1 {
+  .profile-hero-compact h1 {
     min-width: 0;
     align-self: center;
     font-size: .98rem;
     line-height: 1.05;
   }
-  .profile-hero.is-compact .hero-actions {
+  .profile-hero-compact .hero-actions {
     display: none;
   }
-  .profile-hero.is-compact .linkedin-mark {
+  .profile-hero-compact .linkedin-mark {
     width: 1.25rem;
     height: 1.25rem;
   }
@@ -676,6 +740,17 @@ h2 {
     display: grid;
     justify-items: center;
     gap: .3rem;
+    max-height: none;
+    overflow: visible;
+  }
+  .hero-actions a {
+    min-height: 1.7rem;
+    padding-block: .08rem;
+    line-height: 1.3;
+  }
+  .hero-actions .linkedin-mark {
+    width: 1.55rem;
+    height: 1.55rem;
   }
   .hero-actions > :first-child {
     grid-row: 1;
@@ -686,7 +761,7 @@ h2 {
   .hero-actions a {
     grid-row: 3;
   }
-  .profile-hero.is-compact .hero-location {
+  .profile-hero-compact .hero-location {
     display: none;
   }
   .timeline {
@@ -702,7 +777,6 @@ h2 {
   .post-card {
     gap: .75rem;
     grid-template-columns: 2rem minmax(0, 1fr);
-    scroll-margin-top: 8rem;
   }
   .post-heading {
     display: grid;

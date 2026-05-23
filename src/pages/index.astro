@@ -46,28 +46,54 @@ const icons = {
   </button>
 
   <main class="page-shell">
-    <header class="profile-hero" data-profile-hero>
+    <div class="profile-hero-shell" data-profile-hero-shell>
+      <header class="profile-hero" data-profile-hero>
+        <div class="portrait-wrap">
+          <img src="/profile.png" alt="Sandya Baratha Raj" class="portrait" width="176" height="176" />
+        </div>
+        <div class="hero-copy">
+          <h1>Sandya Baratha Raj</h1>
+          <div class="hero-actions" aria-label="Profile links">
+            <span>Data Science and AI Leader</span>
+            <span class="hero-separator" aria-hidden="true">&bull;</span>
+            <span class="hero-location">Sydney, Australia</span>
+            <span class="hero-separator" aria-hidden="true">&bull;</span>
+            <a href="https://www.linkedin.com/in/sbaratharaj/" rel="me noopener noreferrer" target="_blank">
+              <span class="linkedin-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
+                  <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4v15h-4V8zm7.5 0h3.83v2.05h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.88c0-1.88-.03-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.16V23h-4V8z" />
+                </svg>
+              </span>
+              Connect on LinkedIn
+            </a>
+          </div>
+        </div>
+      </header>
+    </div>
+
+    <header class="profile-hero-compact" data-profile-hero-compact aria-hidden="true">
       <div class="portrait-wrap">
         <img src="/profile.png" alt="Sandya Baratha Raj" class="portrait" width="176" height="176" />
       </div>
       <div class="hero-copy">
         <h1>Sandya Baratha Raj</h1>
-        <div class="hero-actions" aria-label="Profile links">
-          <span>Data Science and AI Leader</span>
-          <span class="hero-separator" aria-hidden="true">&bull;</span>
-          <span class="hero-location">Sydney, Australia</span>
-          <span class="hero-separator" aria-hidden="true">&bull;</span>
-          <a href="https://www.linkedin.com/in/sbaratharaj/" rel="me noopener noreferrer" target="_blank">
-            <span class="linkedin-mark" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
-                <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4v15h-4V8zm7.5 0h3.83v2.05h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.88c0-1.88-.03-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.16V23h-4V8z" />
-              </svg>
-            </span>
-            Connect on LinkedIn
-          </a>
-        </div>
       </div>
     </header>
+
+    <a
+      class="compact-linkedin-button"
+      data-compact-linkedin
+      href="https://www.linkedin.com/in/sbaratharaj/"
+      rel="me noopener noreferrer"
+      target="_blank"
+      aria-label="Open LinkedIn profile"
+      aria-hidden="true"
+      tabindex="-1"
+    >
+      <svg viewBox="0 0 24 24" width="14" height="14" focusable="false" aria-hidden="true">
+        <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4v15h-4V8zm7.5 0h3.83v2.05h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.88c0-1.88-.03-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.16V23h-4V8z" />
+      </svg>
+    </a>
 
     <button class="menu-toggle" type="button" data-menu-toggle aria-controls="timeline-menu" aria-expanded="false" aria-label="Open timeline menu">
       <span></span>
@@ -144,8 +170,11 @@ const icons = {
     const toggle = document.querySelector('[data-theme-toggle]');
     const icon = document.querySelector('[data-theme-icon]');
     const profileHero = document.querySelector('[data-profile-hero]');
+    const profileHeroCompact = document.querySelector('[data-profile-hero-compact]');
+    const compactLinkedin = document.querySelector('[data-compact-linkedin]');
     const menuToggle = document.querySelector('[data-menu-toggle]');
     const dateIndex = document.querySelector('.date-index');
+    const profileHeroShell = document.querySelector('[data-profile-hero-shell]');
 
     const paintIcon = () => {
       if (icon) icon.textContent = root.dataset.theme === 'dark' ? '☼' : '☾';
@@ -167,16 +196,24 @@ const icons = {
     let ticking = false;
     let headerCompact = false;
     let headerCollapseAt = profileHero?.getBoundingClientRect().height ?? 72;
+    let headerCollapseThreshold = Math.max(4, headerCollapseAt - 64);
     const measureHeader = () => {
       if (!profileHero || headerCompact) return;
       headerCollapseAt = profileHero.getBoundingClientRect().height;
+      headerCollapseThreshold = Math.max(4, headerCollapseAt - 64);
+      profileHeroShell?.style.setProperty('--profile-hero-height', `${headerCollapseAt}px`);
     };
     const updateHeader = () => {
       const scrollTop = window.scrollY;
-      const shouldCompact = headerCompact ? scrollTop > 4 : scrollTop > headerCollapseAt * 0.5;
+      const shouldCompact = headerCompact ? scrollTop > 4 : scrollTop > headerCollapseThreshold;
       if (shouldCompact !== headerCompact) {
         headerCompact = shouldCompact;
-        profileHero?.classList.toggle('is-compact', headerCompact);
+        profileHeroShell?.classList.toggle('is-compact', headerCompact);
+        profileHeroCompact?.classList.toggle('is-visible', headerCompact);
+        profileHeroCompact?.setAttribute('aria-hidden', headerCompact ? 'false' : 'true');
+        compactLinkedin?.classList.toggle('is-visible', headerCompact);
+        compactLinkedin?.setAttribute('aria-hidden', headerCompact ? 'false' : 'true');
+        compactLinkedin?.setAttribute('tabindex', headerCompact ? '0' : '-1');
       }
       ticking = false;
     };
