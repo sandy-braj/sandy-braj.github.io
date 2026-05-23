@@ -1,0 +1,19 @@
+{
+  "name": "sandy-braj.github.io",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "generate:og": "bun scripts/generate-og.mjs",
+    "build": "bun run generate:og && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "latest",
+    "astro": "latest",
+    "sharp": "latest",
+    "typescript": "latest"
+  },
+  "devDependencies": {}
+}

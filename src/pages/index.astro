@@ -1,0 +1,304 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+import { postTypes } from '../data/post-types';
+import '../styles/global.css';
+
+const posts = await Promise.all(
+  (await getCollection('posts'))
+    .filter((post) => !post.data.hidden)
+    .sort((a, b) => +b.data.date - +a.data.date)
+    .map(async (post) => ({ post, Content: (await render(post)).Content }))
+);
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat('en-AU', { year: 'numeric', month: 'short', day: '2-digit' }).format(new Date(date));
+
+const actionLabels = {
+  research: 'View research',
+  patent: 'View patent',
+  media: 'View media',
+  press: 'View press release',
+  post: 'Read post',
+  project: 'View project',
+  milestone: 'View milestone'
+};
+
+const icons = {
+  research:
+    'M5 4.75A2.75 2.75 0 0 1 7.75 2H20v16.5h-9.75A2.25 2.25 0 0 0 8 20.75V5.5A.75.75 0 0 0 7.25 4.75H5Zm0 0v15.5A1.75 1.75 0 0 0 6.75 22H20M11 6h5m-5 4h6m-6 4h4',
+  patent:
+    'M12 2.75 14.15 7.1l4.8.7-3.47 3.38.82 4.78L12 13.7l-4.3 2.26.82-4.78L5.05 7.8l4.8-.7L12 2.75Zm0 11v7.5m-4 0h8',
+  media:
+    'M4 7.5h10a3 3 0 0 1 3 3v5a3 3 0 0 1-3 3H4v-11Zm13 3 3-2v9l-3-2M7 10.5h4m-4 3h6',
+  press:
+    'M5 4h11l3 3v13H5V4Zm11 0v4h4M8 9h6m-6 4h8m-8 4h5',
+  post:
+    'M5 5.5h14v11H8l-3 3v-14Zm4 4h6m-6 3h4',
+  project:
+    'M4 7h7l2 2h7v9.5A2.5 2.5 0 0 1 17.5 21h-11A2.5 2.5 0 0 1 4 18.5V7Zm0 0V5h6l2 2',
+  milestone:
+    'M6 21V4.5m0 0h10.5l-2 3 2 3H6m3 6h6m-6 3h4'
+};
+---
+<Base>
+  <button class="theme-toggle" type="button" aria-label="Toggle dark mode" data-theme-toggle>
+    <span data-theme-icon>◐</span>
+  </button>
+
+  <main class="page-shell">
+    <header class="profile-hero" data-profile-hero>
+      <div class="portrait-wrap">
+        <img src="/profile.png" alt="Sandya Baratha Raj" class="portrait" width="176" height="176" />
+      </div>
+      <div class="hero-copy">
+        <h1>Sandya Baratha Raj</h1>
+        <div class="hero-actions" aria-label="Profile links">
+          <span>Data Science and AI Leader</span>
+          <span class="hero-separator" aria-hidden="true">&bull;</span>
+          <span class="hero-location">Sydney, Australia</span>
+          <span class="hero-separator" aria-hidden="true">&bull;</span>
+          <a href="https://www.linkedin.com/in/sbaratharaj/" rel="me noopener noreferrer" target="_blank">
+            <span class="linkedin-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
+                <path fill="currentColor" d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.5 8h4v15h-4V8zm7.5 0h3.83v2.05h.05c.53-1 1.84-2.05 3.78-2.05 4.04 0 4.79 2.66 4.79 6.12V23h-4v-7.88c0-1.88-.03-4.3-2.62-4.3-2.63 0-3.03 2.05-3.03 4.16V23h-4V8z" />
+              </svg>
+            </span>
+            Connect on LinkedIn
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <button class="menu-toggle" type="button" data-menu-toggle aria-controls="timeline-menu" aria-expanded="false" aria-label="Open timeline menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <section class="timeline" aria-label="Timeline posts">
+      <nav id="timeline-menu" class="date-index" aria-label="Post filters and dates">
+        <div class="type-filters" aria-label="Filter post types">
+          {Object.entries(postTypes).map(([type, meta]) => (
+            <button type="button" data-type-filter={type} aria-pressed="true">
+              <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <path d={icons[type]} />
+              </svg>
+              <span>{meta.label}</span>
+            </button>
+          ))}
+        </div>
+        {posts.map(({ post }) => (
+          <a href={`#${post.id}`} data-date-link={post.id} data-date-type={post.data.type}>
+            <time datetime={post.data.date.toISOString()}>{post.data.date.getFullYear()}</time>
+            <span>{new Intl.DateTimeFormat('en-AU', { month: 'short', day: '2-digit' }).format(post.data.date)}</span>
+          </a>
+        ))}
+      </nav>
+      <div class="timeline-rule" aria-hidden="true"></div>
+      <div class="posts" data-feed>
+        {posts.map(({ post, Content }, index) => {
+          const item = post.data;
+          return (
+            <article id={post.id} class="post-card" data-post={post.id} data-type={item.type} data-filtered="true" data-visible={index < 5 ? 'true' : 'false'}>
+              <div class="node" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d={icons[item.type]} />
+                </svg>
+              </div>
+              <div class="post-paper">
+                <div class="post-heading">
+                  <h2>
+                    <span class="title-link-wrap">
+                      <span class={item.type === 'milestone' ? 'milestone-title' : undefined}>
+                        {item.title}
+                        {item.type === 'milestone' && item.venue && <em class="milestone-venue"> at {item.venue}</em>}
+                      </span>
+                      <button class="permalink" type="button" data-permalink={post.id} aria-label={`Copy permalink for ${item.title}`}>
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M10 13a5 5 0 0 0 7.07 0l2.12-2.12a5 5 0 0 0-7.07-7.07L10.9 5.03" />
+                          <path d="M14 11a5 5 0 0 0-7.07 0L4.81 13.12a5 5 0 0 0 7.07 7.07l1.22-1.22" />
+                        </svg>
+                      </button>
+                    </span>
+                  </h2>
+                  <time datetime={item.date.toISOString()}>{formatDate(item.date)}</time>
+                </div>
+                {item.venue && item.type !== 'milestone' && <p class="venue">{item.venue}</p>}
+                {item.summary.trim() && <p>{item.summary}</p>}
+                <div class="post-body">
+                  <Content />
+                </div>
+                {item.meta && <p class="meta">{item.meta}</p>}
+                {item.href && <a class="read-link" href={item.href}>{actionLabels[item.type]}</a>}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+      <div class="sentinel" data-sentinel aria-hidden="true"></div>
+    </section>
+  </main>
+
+  <script>
+    const root = document.documentElement;
+    const toggle = document.querySelector('[data-theme-toggle]');
+    const icon = document.querySelector('[data-theme-icon]');
+    const profileHero = document.querySelector('[data-profile-hero]');
+    const menuToggle = document.querySelector('[data-menu-toggle]');
+    const dateIndex = document.querySelector('.date-index');
+
+    const paintIcon = () => {
+      if (icon) icon.textContent = root.dataset.theme === 'dark' ? '☼' : '☾';
+    };
+
+    paintIcon();
+    toggle?.addEventListener('click', () => {
+      const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      localStorage.setItem('theme', next);
+      icon?.classList.remove('is-switching');
+      if (icon) void icon.offsetWidth;
+      icon?.classList.add('is-switching');
+      paintIcon();
+    });
+
+    icon?.addEventListener('animationend', () => icon.classList.remove('is-switching'));
+
+    let ticking = false;
+    let headerCompact = false;
+    let headerCollapseAt = profileHero?.getBoundingClientRect().height ?? 72;
+    const measureHeader = () => {
+      if (!profileHero || headerCompact) return;
+      headerCollapseAt = profileHero.getBoundingClientRect().height;
+    };
+    const updateHeader = () => {
+      const scrollTop = window.scrollY;
+      const shouldCompact = headerCompact ? scrollTop > 4 : scrollTop > headerCollapseAt * 0.5;
+      if (shouldCompact !== headerCompact) {
+        headerCompact = shouldCompact;
+        profileHero?.classList.toggle('is-compact', headerCompact);
+      }
+      ticking = false;
+    };
+    measureHeader();
+    updateHeader();
+    window.addEventListener('resize', measureHeader, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      requestAnimationFrame(updateHeader);
+      ticking = true;
+    }, { passive: true });
+
+    const setMenu = (open) => {
+      document.body.classList.toggle('menu-open', open);
+      menuToggle?.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menuToggle?.setAttribute('aria-label', open ? 'Close timeline menu' : 'Open timeline menu');
+    };
+
+    menuToggle?.addEventListener('click', () => setMenu(!document.body.classList.contains('menu-open')));
+    document.addEventListener('click', (event) => {
+      if (!(event.target instanceof Element)) return;
+      if (!document.body.classList.contains('menu-open')) return;
+      if (event.target.closest('[data-menu-toggle], .date-index')) return;
+      setMenu(false);
+    });
+    dateIndex?.addEventListener('click', (event) => {
+      if (event.target instanceof Element && event.target.closest('a, button')) setMenu(false);
+    });
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setMenu(false);
+    });
+
+    const posts = [...document.querySelectorAll('[data-post]')];
+    const sentinel = document.querySelector('[data-sentinel]');
+    const dateLinks = [...document.querySelectorAll('[data-date-link]')];
+    const typeFilters = [...document.querySelectorAll('[data-type-filter]')];
+    const permalinks = [...document.querySelectorAll('[data-permalink]')];
+    const activeTypes = new Set(typeFilters.map((button) => button.getAttribute('data-type-filter')));
+    let visible = posts.filter((post) => post.getAttribute('data-visible') === 'true').length;
+
+    const reveal = () => {
+      const next = posts.filter((post) => post.getAttribute('data-filtered') === 'true' && post.getAttribute('data-visible') !== 'true').slice(0, 4);
+      next.forEach((post) => post.setAttribute('data-visible', 'true'));
+      visible += next.length;
+    };
+
+    const applyFilters = () => {
+      let shown = 0;
+      posts.forEach((post) => {
+        const matches = activeTypes.has(post.getAttribute('data-type'));
+        post.setAttribute('data-filtered', matches ? 'true' : 'false');
+        post.setAttribute('data-visible', matches && shown < 5 ? 'true' : 'false');
+        if (matches) shown += 1;
+      });
+      dateLinks.forEach((link) => {
+        link.setAttribute('data-filtered', activeTypes.has(link.getAttribute('data-date-type')) ? 'true' : 'false');
+        link.removeAttribute('aria-current');
+      });
+      visible = Math.min(shown, 5);
+    };
+
+    typeFilters.forEach((button) => {
+      button.addEventListener('click', () => {
+        const type = button.getAttribute('data-type-filter');
+        if (!type) return;
+        if (activeTypes.size === typeFilters.length) {
+          activeTypes.clear();
+          activeTypes.add(type);
+        } else if (activeTypes.has(type)) {
+          activeTypes.delete(type);
+        } else {
+          activeTypes.add(type);
+        }
+        if (activeTypes.size === 0) {
+          typeFilters.forEach((filter) => activeTypes.add(filter.getAttribute('data-type-filter')));
+        }
+        typeFilters.forEach((filter) => {
+          filter.setAttribute('aria-pressed', activeTypes.has(filter.getAttribute('data-type-filter')) ? 'true' : 'false');
+        });
+        applyFilters();
+      });
+    });
+
+    permalinks.forEach((button) => {
+      button.addEventListener('click', async () => {
+        const id = button.getAttribute('data-permalink');
+        if (!id) return;
+        const url = new URL(`#${id}`, window.location.href);
+        try {
+          await navigator.clipboard.writeText(url.toString());
+          button.setAttribute('aria-label', 'Permalink copied');
+          button.setAttribute('data-copied', 'true');
+          setTimeout(() => {
+            button.removeAttribute('data-copied');
+            button.setAttribute('aria-label', 'Copy permalink');
+          }, 1200);
+        } catch {
+          window.location.hash = id;
+        }
+      });
+    });
+
+    if (sentinel && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) reveal();
+        if (visible >= posts.length) observer.disconnect();
+      }, { rootMargin: '420px' });
+      observer.observe(sentinel);
+    } else {
+      posts.forEach((post) => post.setAttribute('data-visible', 'true'));
+    }
+
+    if ('IntersectionObserver' in window) {
+      const activeObserver = new IntersectionObserver((entries) => {
+        const active = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!active) return;
+        dateLinks.forEach((link) => link.removeAttribute('aria-current'));
+        document.querySelector(`[data-date-link="${active.target.id}"]`)?.setAttribute('aria-current', 'true');
+      }, { rootMargin: '-20% 0px -65% 0px', threshold: [0, .25, .5, .75, 1] });
+      posts.forEach((post) => activeObserver.observe(post));
+    }
+  </script>
+</Base>
