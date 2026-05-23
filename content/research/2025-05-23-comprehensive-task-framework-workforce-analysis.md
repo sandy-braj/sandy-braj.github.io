@@ -14,4 +14,4 @@ The work proposes a task taxonomy design based on decomposition and reconstructi
 
 The paper demonstrates the framework through a visual analytics system for interactive exploration of tasks, occupations, and associated skills.
 
-Demo video: https://bit.ly/41txBZK
+Demo video: [Watch demo video](https://bit.ly/41txBZK)

@@ -524,6 +524,12 @@ h2 {
   margin-top: 1rem;
 }
 
+.post-body p,
+.post-body li,
+.post-body a {
+  overflow-wrap: anywhere;
+}
+
 .post-body > *:last-child { margin-bottom: 0; }
 .post-body h3 { font-size: 1.05rem; }
 .post-body blockquote {
@@ -557,7 +563,7 @@ h2 {
 .sentinel { height: 1px; }
 
 @media (max-width: 700px) {
-  :root { --compact-header-height: 5.35rem; }
+  :root { --compact-header-height: 3.95rem; }
 
   .menu-toggle {
     position: fixed;
@@ -620,46 +626,44 @@ h2 {
     pointer-events: auto;
     transform: translateY(0);
   }
-  .page-shell { width: min(100% - 24px, 42rem); padding-top: 2rem; }
+  .page-shell { width: min(calc(100% - 24px), 42rem); padding-top: 2rem; }
   .profile-hero { padding-top: .5rem; }
   .portrait-wrap { width: 128px; }
   .profile-hero.is-compact {
-    grid-template-columns: 1fr auto auto 1fr;
-    justify-content: stretch;
-    justify-items: center;
-    align-content: center;
+    grid-template-columns: auto minmax(0, 1fr);
+    justify-content: start;
+    justify-items: stretch;
+    align-items: center;
     column-gap: .65rem;
-    row-gap: .35rem;
-    padding: .6rem 3.5rem .6rem 3.5rem;
+    row-gap: 0;
+    padding: .6rem .9rem .6rem 3.25rem;
   }
   .profile-hero.is-compact .portrait-wrap {
-    grid-column: 2;
     display: grid;
     width: 2.35rem;
     height: 2.15rem;
-    padding: .16rem;
+    padding: 0;
     place-items: center;
   }
   .profile-hero.is-compact .portrait {
-    width: auto;
-    height: 1.6rem;
+    width: 1.75rem;
+    height: 1.75rem;
     aspect-ratio: 1;
     object-fit: cover;
   }
   .profile-hero.is-compact .hero-copy {
-    display: contents;
+    display: flex;
+    min-width: 0;
+    align-items: center;
   }
   .profile-hero.is-compact h1 {
-    grid-column: 3;
+    min-width: 0;
     align-self: center;
+    font-size: .98rem;
+    line-height: 1.05;
   }
   .profile-hero.is-compact .hero-actions {
-    grid-column: 1 / -1;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: .25rem .6rem;
-    white-space: normal;
-    font-size: .82rem;
+    display: none;
   }
   .profile-hero.is-compact .linkedin-mark {
     width: 1.25rem;
@@ -667,6 +671,20 @@ h2 {
   }
   .hero-separator {
     display: none;
+  }
+  .hero-actions {
+    display: grid;
+    justify-items: center;
+    gap: .3rem;
+  }
+  .hero-actions > :first-child {
+    grid-row: 1;
+  }
+  .hero-actions .hero-location {
+    grid-row: 2;
+  }
+  .hero-actions a {
+    grid-row: 3;
   }
   .profile-hero.is-compact .hero-location {
     display: none;

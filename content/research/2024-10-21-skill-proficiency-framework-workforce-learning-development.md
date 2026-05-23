@@ -14,4 +14,4 @@ The framework includes a skill proficiency description pipeline that generates s
 
 The paper also presents a visual analytics system based on a real-world career pathway scenario to demonstrate practical usefulness and effectiveness.
 
-Demo video: https://www.dropbox.com/scl/fi/nd0f3vi03n12g4y0sluaw/cikm24_demo.mp4?rlkey=55vya144q5ftai1uqqaubr5u5
+Demo video: [Watch demo video](https://www.dropbox.com/scl/fi/nd0f3vi03n12g4y0sluaw/cikm24_demo.mp4?rlkey=55vya144q5ftai1uqqaubr5u5)
